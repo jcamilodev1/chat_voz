@@ -104,6 +104,28 @@ Antes de comenzar, asegúrate de tener instalado:
 - Los mensajes se sincronizan automáticamente entre pestañas abiertas
 - No requiere servidor backend - funciona completamente en el navegador
 
+### 🤖 Simulador de Mensajes
+ChatVoz incluye un simulador que genera mensajes de voz entrantes para demostrar la funcionalidad en tiempo real:
+
+#### Activación del Simulador
+1. **Ubicación**: Busca el botón "Simular" en la barra superior del chat (ChatHeader)
+2. **Activar**: Haz clic en el botón para iniciar la simulación
+3. **Indicador visual**: El botón cambia a color verde cuando está activo
+4. **Desactivar**: Haz clic nuevamente para detener la simulación
+
+#### Características del Simulador
+- **Mensajes automáticos**: Genera mensajes cada 5-15 segundos de forma aleatoria
+- **Usuarios simulados**: 5 usuarios diferentes con nombres realistas
+- **Variedad de mensajes**: 10 tipos diferentes de mensajes con duraciones de 2-10 segundos
+- **Audio sintético**: Genera audio WAV válido que simula voz humana
+- **Notificaciones**: Muestra notificaciones toast cuando llegan nuevos mensajes
+
+#### Notificaciones
+- **Ubicación**: Aparecen en la esquina superior derecha
+- **Contenido**: Muestran el nombre del usuario y la duración del mensaje
+- **Duración**: Se ocultan automáticamente después de 3 segundos
+- **Tipos**: Notificaciones de mensajes entrantes y cambios de estado del simulador
+
 
 ## 🔧 Scripts Disponibles
 

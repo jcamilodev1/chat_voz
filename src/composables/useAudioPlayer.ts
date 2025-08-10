@@ -35,6 +35,13 @@ export function useAudioPlayer() {
       isLoading.value = true
       error.value = null
       
+      // Validar URL
+      if (!audioUrl || audioUrl.trim() === '') {
+        throw new Error('URL de audio vacía o inválida')
+      }
+      
+      console.log('🎵 Cargando audio desde:', audioUrl.substring(0, 50) + '...')
+      
       // Limpiar audio anterior
       if (audio.value) {
         cleanup()
@@ -49,6 +56,7 @@ export function useAudioPlayer() {
       audio.value.addEventListener('loadedmetadata', () => {
         duration.value = audio.value?.duration || 0
         isLoading.value = false
+        console.log('✅ Audio metadata cargada, duración:', duration.value)
       })
 
       audio.value.addEventListener('timeupdate', () => {
@@ -59,39 +67,76 @@ export function useAudioPlayer() {
         isPlaying.value = false
         currentTime.value = 0
         stopUpdateInterval()
+        console.log('🏁 Reproducción de audio terminada')
       })
 
       audio.value.addEventListener('error', (e) => {
-        console.error('Audio error:', e)
-        error.value = 'Error al cargar el audio'
+        const audioError = audio.value?.error
+        let errorMessage = 'Error desconocido al cargar el audio'
+        
+        if (audioError) {
+          switch (audioError.code) {
+            case MediaError.MEDIA_ERR_ABORTED:
+              errorMessage = 'Carga de audio abortada'
+              break
+            case MediaError.MEDIA_ERR_NETWORK:
+              errorMessage = 'Error de red al cargar audio'
+              break
+            case MediaError.MEDIA_ERR_DECODE:
+              errorMessage = 'Error al decodificar audio'
+              break
+            case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+              errorMessage = 'Formato de audio no soportado'
+              break
+          }
+        }
+        
+        console.error('❌ Error de audio:', errorMessage, audioError)
+        error.value = errorMessage
         isLoading.value = false
         isPlaying.value = false
       })
 
       audio.value.addEventListener('canplay', () => {
         isLoading.value = false
+        console.log('▶️ Audio listo para reproducir')
       })
 
-      // Cargar metadata
+      // Cargar metadata con timeout
       await new Promise((resolve, reject) => {
         if (!audio.value) {
-          reject(new Error('Audio element not available'))
+          reject(new Error('Elemento de audio no disponible'))
           return
         }
 
+        let timeoutId: number
+        
         const handleLoad = () => {
+          clearTimeout(timeoutId)
           audio.value?.removeEventListener('loadedmetadata', handleLoad)
           audio.value?.removeEventListener('error', handleError)
+          audio.value?.removeEventListener('canplaythrough', handleLoad)
           resolve(true)
         }
 
-        const handleError = () => {
+        const handleError = (e: Event) => {
+          clearTimeout(timeoutId)
           audio.value?.removeEventListener('loadedmetadata', handleLoad)
           audio.value?.removeEventListener('error', handleError)
-          reject(new Error('Failed to load audio'))
+          audio.value?.removeEventListener('canplaythrough', handleLoad)
+          reject(new Error('Error al cargar el audio'))
         }
 
+        // Timeout de 10 segundos
+        timeoutId = window.setTimeout(() => {
+          audio.value?.removeEventListener('loadedmetadata', handleLoad)
+          audio.value?.removeEventListener('error', handleError)
+          audio.value?.removeEventListener('canplaythrough', handleLoad)
+          reject(new Error('Timeout al cargar el audio'))
+        }, 10000)
+
         audio.value.addEventListener('loadedmetadata', handleLoad)
+        audio.value.addEventListener('canplaythrough', handleLoad)
         audio.value.addEventListener('error', handleError)
         
         audio.value.load()
@@ -99,8 +144,9 @@ export function useAudioPlayer() {
 
       return true
     } catch (err) {
-      console.error('Error loading audio:', err)
-      error.value = 'Error al cargar el audio'
+      const errorMessage = err instanceof Error ? err.message : 'Error desconocido'
+      console.error('❌ Error cargando audio:', errorMessage)
+      error.value = errorMessage
       isLoading.value = false
       return false
     }

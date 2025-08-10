@@ -28,7 +28,7 @@ export const useChatStore = defineStore('chat', () => {
           const voiceData = data as BroadcastVoiceMessageData
           
           // Convertir ArrayBuffer de vuelta a Blob y crear URL
-          const audioBlob = new Blob([voiceData.audioArrayBuffer], { type: 'audio/webm' })
+          const audioBlob = new Blob([voiceData.audioArrayBuffer], { type: 'audio/wav' })
           const audioUrl = URL.createObjectURL(audioBlob)
           
           const message: VoiceMessage = {

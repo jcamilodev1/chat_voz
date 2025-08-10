@@ -32,25 +32,39 @@
 
     <!-- Controles -->
     <div class="flex items-center space-x-2">
+      <!-- Simulation toggle button -->
+      <button 
+        @click="toggleSimulation" 
+        class="p-2 rounded-lg transition-colors"
+        :class="{
+          'text-green-600 bg-green-50 hover:bg-green-100': isSimulating,
+          'text-gray-600 hover:text-gray-800 hover:bg-gray-100': !isSimulating
+        }"
+        :title="isSimulating ? 'Detener simulación de mensajes' : 'Iniciar simulación de mensajes'"
+      >
+        <img src="@/assets/icons/microphone.svg" alt="Simulación" class="w-5 h-5" />
+      </button>
+      
       <!-- Settings button -->
-        <button class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors">
-          <img src="@/assets/icons/settings.svg" alt="Configuración" class="w-5 h-5" />
-        </button>
-        
-        <!-- Logout button -->
-        <button 
-          @click="handleLogout" 
-          class="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-          title="Cerrar sesión"
-        >
-          <img src="@/assets/icons/logout.svg" alt="Cerrar sesión" class="w-5 h-5" />
-        </button>
+      <button class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors">
+        <img src="@/assets/icons/settings.svg" alt="Configuración" class="w-5 h-5" />
+      </button>
+      
+      <!-- Logout button -->
+      <button 
+        @click="handleLogout" 
+        class="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+        title="Cerrar sesión"
+      >
+        <img src="@/assets/icons/logout.svg" alt="Cerrar sesión" class="w-5 h-5" />
+      </button>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useMessageSimulator } from '@/composables/useMessageSimulator'
 
 // Props
 interface Props {
@@ -64,6 +78,9 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   logout: []
 }>()
+
+// Composables
+const { isSimulating, toggleSimulation } = useMessageSimulator()
 
 // Computed
 const avatarText = computed(() => {
