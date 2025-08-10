@@ -38,7 +38,7 @@
       class="absolute bottom-20 right-4 z-10"
     >
       <button
-        @click="scrollToBottom"
+        @click="() => scrollToBottom()"
         class="bg-blue-600 text-white p-2 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
         title="Ir al final"
       >

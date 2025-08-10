@@ -1,10 +1,10 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import LoginView from '@/pages/LoginView.vue'
 import ChatView from '@/pages/ChatView.vue'
 import { useUserStore } from '@/stores/user'
 
 // Definir rutas
-const routes = [
+const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'login',
